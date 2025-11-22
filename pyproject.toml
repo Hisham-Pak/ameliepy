@@ -1,0 +1,25 @@
+[project]
+name = "ameliepy"
+version = "0.1.0"
+description = "Amelie database adapter for the Python programming language."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.32.5",
+]
+
+[dependency-groups]
+dev = [
+  {include-group = "lint"},
+  {include-group = "test"},
+  {include-group = "doc"},
+]
+lint = [
+  "ruff"
+]
+test = [
+  "pytest"
+]
+doc = [
+  "sphinx"
+]
