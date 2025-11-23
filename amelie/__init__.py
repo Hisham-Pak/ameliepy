@@ -66,6 +66,8 @@ apilevel = "2.0"
 threadsafety = 1
 paramstyle = "pyformat"
 
+# Package metadata
+__version__ = "0.1.1"
 
 __all__ = [
     # Core components
