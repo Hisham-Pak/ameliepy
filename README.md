@@ -13,11 +13,11 @@ This project provides DB-API 2.0–style access to amelie, enabling seamless int
 Clone the repository and install dependencies using [uv](https://github.com/astral-sh/uv):
 
 ```bash
-# Editable install
-uv pip install -e .
-
 # Install dependencies
 uv sync
+
+# Editable install
+uv pip install -e .
 ```
 
 ## ▶️ Managing Amelie
