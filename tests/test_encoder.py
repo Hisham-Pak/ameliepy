@@ -1,6 +1,7 @@
 import json
 import uuid
 from datetime import date, time, datetime
+from decimal import Decimal
 
 import pytest
 
@@ -113,8 +114,8 @@ def test_mapping_styles():
             {"i1": 127, "i2": -128, "i3": 32767, "i4": 2147483647, "i5": 9223372036854775807},
             "SELECT 127, -128, 32767, 2147483647, 9223372036854775807",
         ),
-        # float / double
-        ("SELECT %(f1)s, %(f2)s", {"f1": 1.5, "f2": 2.25}, "SELECT 1.5, 2.25"),
+        # float / Decimal
+        ("SELECT %(f1)s, %(f2)s", {"f1": 1.5, "f2": Decimal(2.25)}, "SELECT 1.5, 2.25"),
         # text
         ("SELECT %(s1)s, %(s2)s", {"s1": "hello", "s2": "world"}, "SELECT 'hello', 'world'"),
         # json
@@ -138,7 +139,6 @@ def test_mapping_styles():
 )
 def test_format_query_various_literals_mapping_style(query, params, expected_sql):
     sql = encoder.format_query(query, params)
-    print(sql, expected_sql)
     assert sql == expected_sql
 
 @pytest.mark.parametrize(
@@ -183,5 +183,4 @@ def test_format_query_various_literals_mapping_style(query, params, expected_sql
 )
 def test_format_query_various_literals_sequence_style(query, params, expected_sql):
     sql = encoder.format_query(query, params)
-    print(sql, expected_sql)
     assert sql == expected_sql

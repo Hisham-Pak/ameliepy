@@ -8,6 +8,7 @@ from datetime import date as _date, time as _time, datetime as _datetime
 import json as _json
 import uuid as _uuid
 from typing import Any
+from decimal import Decimal
 
 from . import errors as e
 from .types import Date, Time, Timestamp, Binary
@@ -24,7 +25,7 @@ def literal(value: Any) -> str:
     Rules:
     - None -> NULL
     - bool -> TRUE/FALSE
-    - int/float -> literal numeric
+    - int/float/Decimal -> literal numeric
     - str -> single-quoted with internal single-quotes doubled
     - dict/list/tuple -> JSON string (quoted)
     - Date/Time/Timestamp/_date/_time/_datetime -> formatted and quoted
@@ -39,8 +40,7 @@ def literal(value: Any) -> str:
         return "TRUE" if value else "FALSE"
 
     # Numbers
-    if isinstance(value, (int, float)):
-        # NaN and infinities should be quoted to avoid invalid SQL
+    if isinstance(value, (int, float, Decimal)):
         if isinstance(value, float):
             if (
                 _json.dumps(value) == "NaN"
