@@ -43,22 +43,7 @@ from .types import (
     TimeFromTicks,
     TimestampFromTicks,
 )
-from .FIELD_TYPE import (
-    BOOL,
-    TINYINT,
-    SMALLINT,
-    INT,
-    BIGINT,
-    FLOAT,
-    DOUBLE,
-    TEXT,
-    JSON,
-    TIMESTAMP,
-    INTERVAL,
-    DATE,
-    VECTOR,
-    UUID,
-)
+from .FIELD_TYPE import FIELD_MAP
 
 # DBAPI compliance
 connect = Connection.connect
@@ -99,18 +84,5 @@ __all__ = [
     "TimeFromTicks",
     "TimestampFromTicks",
     # Field Types
-    "BOOL",
-    "TINYINT",
-    "SMALLINT",
-    "INT",
-    "BIGINT",
-    "FLOAT",
-    "DOUBLE",
-    "TEXT",
-    "JSON",
-    "TIMESTAMP",
-    "INTERVAL",
-    "DATE",
-    "VECTOR",
-    "UUID",
+    "FIELD_MAP",
 ]
