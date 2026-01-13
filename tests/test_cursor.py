@@ -102,7 +102,17 @@ def test_description(db_setup):
     cur.execute(f"INSERT INTO {schema}.test_table (id, val) VALUES (1, 'a')")
     cur.execute(f"SELECT id, val FROM {schema}.test_table")
     desc = cur.description
-    assert desc is None  # TODO: Since description is not yet implemented
+    # description should now be populated with (name, type_code, display_size,
+    # internal_size, precision, scale, null_ok) tuples for each column
+    assert desc is not None
+    assert len(desc) == 2
+    # id should be an integer type, val should be text
+    from amelie.FIELD_TYPE import FIELD_MAP
+
+    assert desc[0][0] == "id"
+    assert desc[0][1] == FIELD_MAP.get("INT")
+    assert desc[1][0] == "val"
+    assert desc[1][1] == FIELD_MAP.get("TEXT")
 
 
 def test_rowcount(db_setup):
