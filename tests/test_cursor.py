@@ -6,7 +6,8 @@ def test_hello_world(db_setup):
     _, cur, _ = db_setup
     cur.execute("SELECT 'Hello, World!'")
     row = cur.fetchone()
-    assert row == "Hello, World!"
+    # cursor returns a mapping of column names to values
+    assert row["col1"] == "Hello, World!"
 
 
 def test_insert_and_query(db_setup):
@@ -14,7 +15,7 @@ def test_insert_and_query(db_setup):
     cur.execute(f"INSERT INTO {schema}.test_table (id, val) VALUES (1, 'a'), (2, 'b')")
     cur.execute(f"SELECT id, val FROM {schema}.test_table ORDER BY id")
     rows = cur.fetchall()
-    assert rows == [[1, "a"], [2, "b"]]
+    assert rows == [{"id": 1, "val": "a"}, {"id": 2, "val": "b"}]
 
 
 def test_invalid_query(db_setup):
@@ -29,7 +30,7 @@ def test_execute_with_params(db_setup):
     cur.execute(f"INSERT INTO {schema}.test_table (id, val) VALUES (%s, %s)", (1, "a"))
     cur.execute(f"SELECT id, val FROM {schema}.test_table WHERE id = %s", (1,))
     row = cur.fetchone()
-    assert row == [1, "a"]
+    assert row == {"id": 1, "val": "a"}
 
 
 def test_execute_after_close(db_setup):
@@ -60,8 +61,8 @@ def test_fetchone(db_setup):
     row1 = cur.fetchone()
     row2 = cur.fetchone()
     row3 = cur.fetchone()
-    assert row1 == [1, "a"]
-    assert row2 == [2, "b"]
+    assert row1 == {"id": 1, "val": "a"}
+    assert row2 == {"id": 2, "val": "b"}
     assert row3 is None
 
 
@@ -72,9 +73,9 @@ def test_fetchmany(db_setup):
     )
     cur.execute(f"SELECT id, val FROM {schema}.test_table ORDER BY id")
     rows = cur.fetchmany(size=2)
-    assert rows == [[1, "a"], [2, "b"]]
+    assert rows == [{"id": 1, "val": "a"}, {"id": 2, "val": "b"}]
     rows = cur.fetchmany(size=2)
-    assert rows == [[3, "c"]]
+    assert rows == [{"id": 3, "val": "c"}]
 
 
 def test_fetchall(db_setup):
@@ -82,7 +83,7 @@ def test_fetchall(db_setup):
     cur.execute(f"INSERT INTO {schema}.test_table (id, val) VALUES (1, 'a'), (2, 'b')")
     cur.execute(f"SELECT id, val FROM {schema}.test_table ORDER BY id")
     rows = cur.fetchall()
-    assert rows == [[1, "a"], [2, "b"]]
+    assert rows == [{"id": 1, "val": "a"}, {"id": 2, "val": "b"}]
 
 
 def test_fetch_no_results(db_setup):
@@ -135,7 +136,7 @@ def test_cursor_context_manager(db_setup):
         cur.execute(f"INSERT INTO {schema}.test_table (id, val) VALUES (1, 'a')")
         cur.execute(f"SELECT id, val FROM {schema}.test_table")
         row = cur.fetchone()
-        assert row == [1, "a"]
+        assert row == {"id": 1, "val": "a"}
     assert cur.closed
 
 
@@ -153,7 +154,7 @@ def test_cursor_context_manager_closes_on_exception(db_setup):
     with conn.cursor() as cur:
         cur.execute(f"SELECT id, val FROM {schema}.test_table")
         row = cur.fetchone()
-        assert row == [1, "a"]
+        assert row == {"id": 1, "val": "a"}
 
 
 def test_cursor_reuse_after_close(db_setup):
@@ -171,7 +172,7 @@ def test_cursor_multiple(db_setup):
     cur1.execute(f"INSERT INTO {schema}.test_table (id, val) VALUES (1, 'a')")
     cur2.execute(f"SELECT id, val FROM {schema}.test_table")
     row = cur2.fetchone()
-    assert row == [1, "a"]
+    assert row == {"id": 1, "val": "a"}
     cur1.close()
     cur2.close()
 
@@ -189,7 +190,7 @@ def test_sudden_db_server_disconnect(db_setup):
     cur.execute(f"INSERT INTO {schema}.test_table (id, val) VALUES (1, 'a')")
     cur.execute(f"SELECT id, val FROM {schema}.test_table")
     row = cur.fetchone()
-    assert row == [1, "a"]
+    assert row == {"id": 1, "val": "a"}
 
 
 def test_cursor_select_all(db_setup):
@@ -199,7 +200,11 @@ def test_cursor_select_all(db_setup):
     )
     cur.execute(f"SELECT * FROM {schema}.test_table ORDER BY id")
     rows = cur.fetchall()
-    assert rows == [[1, "a"], [2, "b"], [3, "c"]]
+    assert rows == [
+        {"id": 1, "val": "a"},
+        {"id": 2, "val": "b"},
+        {"id": 3, "val": "c"},
+    ]
 
 def test_cursor_row_count(db_setup):
     _, cur, schema = db_setup

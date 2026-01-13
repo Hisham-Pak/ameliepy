@@ -48,7 +48,7 @@ export schema="ameliepy_test"
 Execute the test suite with:
 
 ```bash
-uv run pytest -sq
+uv run python -m pytest -sq
 ```
 
 ## 🤝 Contributing

@@ -32,7 +32,7 @@ class Protocol:
         """Send the POST request to the database."""
         return requests.post(
             f"{self.connection.host}/v1/execute",
-            headers={"Content-Type": "text/plain"},
+            headers={"Content-Type": "text/plain", "Prefer": "return=json-obj-pretty"},
             data=query,
         )
 

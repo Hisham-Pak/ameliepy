@@ -97,4 +97,15 @@ def test_select_literals(db_setup, query, expected_data_value):
     _, cur, _ = db_setup
     cur.execute(query)
     row = cur.fetchone()
-    assert row == expected_data_value
+    # The cursor returns rows as dicts mapping column names to values (col1, col2, ...)
+    if isinstance(expected_data_value, list):
+        # Prefer multi-column results (col1, col2, ...). Some queries return a single
+        # column where the value itself is a list/array (e.g. SELECT [1,2,3]). Handle both.
+        if all(f"col{i+1}" in row for i in range(len(expected_data_value))):
+            got = [row[f"col{i+1}"] for i in range(len(expected_data_value))]
+            assert got == expected_data_value
+        else:
+            # Single-column containing the list
+            assert row["col1"] == expected_data_value
+    else:
+        assert row["col1"] == expected_data_value
